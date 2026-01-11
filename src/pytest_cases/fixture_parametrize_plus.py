@@ -1013,7 +1013,7 @@ def _parametrize_plus(argnames: Union[str, tuple[str, ...], list[str]] = None,
             elif iscoroutinefunction(test_func):
                 from .pep492 import _parametrize_plus_decorate_coroutine_pep492
                 wrapped_test_func = _parametrize_plus_decorate_coroutine_pep492(test_func, new_sig, fixture_union_name,
-                                                                               replace_paramfixture_with_values)
+                                                                                replace_paramfixture_with_values)
             elif isgeneratorfunction(test_func):
                 # generator function (with a yield statement)
                 from .pep380 import _parametrize_plus_decorate_generator_pep380
