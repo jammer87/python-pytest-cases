@@ -113,7 +113,7 @@ class FixtureClosureNode:
 
     def __init__(self,
                  fixture_defs_mgr: FixtureDefsCache = None,
-                 parent_node: 'FixtureClosureNode' = None        
+                 parent_node: 'FixtureClosureNode' = None
                  ):
         if fixture_defs_mgr is None:
             if parent_node is None:

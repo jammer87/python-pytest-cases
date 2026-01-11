@@ -38,6 +38,7 @@ class ThisModule(enum.Enum):
     """Class to allow type hints for the THIS_MODULE Singleton"""
     THIS_MODULE = object()
 
+
 THIS_MODULE = ThisModule.THIS_MODULE
 """Singleton that can be used instead of a module name to indicate that the module is the current one"""
 
@@ -687,7 +688,7 @@ def hasinit(obj):
     if init:
         return init != object.__init__
 
- 
+
 def hasnew(obj):
     new = getattr(obj, "__new__", None)
     if new:

@@ -341,7 +341,7 @@ def is_case_function(f: Any,
     else:
         try:
             return f.__name__.startswith(prefix) if check_prefix else True
-        except:
+        except:  # noqa
             # GH#287: safe fallback
             return False
 
@@ -375,4 +375,3 @@ def with_case_tags(*tags):
             case_info.add_tags(tags_to_add)
         return cls
     return _decorator
-
