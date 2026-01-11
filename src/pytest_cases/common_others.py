@@ -13,7 +13,6 @@ import re
 from typing import Union, Callable, Optional, Type  # noqa
 
 
-
 def get_code_first_line(f):
     """
     Returns the source code associated to function or class f. It is robust to wrappers such as @lru_cache
