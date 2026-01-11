@@ -5,9 +5,8 @@
 from __future__ import division
 
 from inspect import isasyncgenfunction, iscoroutinefunction, isgeneratorfunction, signature, Parameter
-from inspect import isgeneratorfunction
-from typing import Callable, Union, Optional, Iterable, Sequence  # noqa
-from types import ModuleType  # noqa
+from typing import Callable, Union, Optional, Iterable, Sequence
+from types import ModuleType
 from warnings import warn
 
 from makefun import with_signature, add_signature_parameters, wraps
