@@ -64,8 +64,8 @@ class _ParametrizationMark:
             pass
         else:
             if len(remaining_kwargs) > 0:
-                warnings.warn("parametrize kwargs not taken into account: %s. Please report it at"
-                              " https://github.com/smarie/python-pytest-cases/issues" % remaining_kwargs)
+                warnings.warn(f"parametrize kwargs not taken into account: {remaining_kwargs}. Please report it at"
+                              " https://github.com/smarie/python-pytest-cases/issues")
         self.param_names = get_param_argnames_as_list(bound.arguments['argnames'])
         self.param_values = bound.arguments['argvalues']
         try:
@@ -222,7 +222,7 @@ def markinfos_to_markdecorators(marks: Iterable[Mark],
                     marks_mod.append(md)
 
     except Exception as e:
-        warnings.warn("Caught exception while trying to mark case: [%s] %s" % (type(e), e))
+        warnings.warn(f"Caught exception while trying to mark case: [{type(e)}] {e}")
     return marks_mod
 
 

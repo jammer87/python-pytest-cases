@@ -46,7 +46,7 @@ class _CaseInfo:
         self.add_tags(tags)
 
     def __repr__(self):
-        return "_CaseInfo(id=%r,marks=%r,tags=%r)" % (self.id, self.marks, self.tags)
+        return f"_CaseInfo(id={self.id!r},marks={self.marks!r},tags={self.tags!r})"
 
     @classmethod
     def get_from(cls,

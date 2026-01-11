@@ -89,7 +89,7 @@ def _fixture_product(fixtures_dest,
                 yield all_fixtures[fix_at_pos_i]
 
     # then generate the body of our product fixture. It will require all of its dependent fixtures
-    @with_signature("(request, %s)" % ', '.join(all_names))
+    @with_signature(f"(request, {', '.join(all_names)})")
     def _new_fixture(request, **all_fixtures):
         return tuple(_tuple_generator(request, all_fixtures))
 
@@ -147,9 +147,9 @@ class fixture_ref:  # noqa
 
     def __repr__(self):
         if self._id is not None:
-            return "fixture_ref<%s, id=%s>" % (self.fixture, self._id)
+            return f"fixture_ref<{self.fixture}, id={self._id}>"
         else:
-            return "fixture_ref<%s>" % self.fixture
+            return f"fixture_ref<{self.fixture}>"
 
     def _check_iterable(self):
         """Raise a TypeError if this fixture reference is not iterable, that is, it does not represent a tuple"""
@@ -187,7 +187,7 @@ class FixtureRefItem:
         self.item = item
 
     def __repr__(self):
-        return "%r[%s]" % (self.host, self.item)
+        return f"{self.host!r}[{self.item}]"
 
 
 # Fix for https://github.com/smarie/python-pytest-cases/issues/71
@@ -237,10 +237,10 @@ class ParamAlternative(UnionFixtureAlternative):
         self.decorated = decorated
 
     def get_union_id(self):
-        return ("(%s)" % ",".join(self.argnames)) if len(self.argnames) > 1 else self.argnames[0]
+        return (f"({','.join(self.argnames)})") if len(self.argnames) > 1 else self.argnames[0]
 
     def get_alternative_idx(self):
-        return "P%s" % self.alternative_index
+        return f"P{self.alternative_index}"
 
     def get_alternative_id(self):
         """Subclasses should return the smallest id representing this parametrize fixture union alternative"""
@@ -314,11 +314,11 @@ class SingleParamAlternative(ParamAlternative):
         param_names_str = '_'.join(argnames).replace(' ', '')
 
         # Create a unique fixture name
-        p_fix_name = "%s_%s_P%s" % (test_func.__name__, param_names_str, i)
+        p_fix_name = f"{test_func.__name__}_{param_names_str}_P{i}"
         p_fix_name = check_name_available(new_fixture_host, p_fix_name, if_name_exists=CHANGE, caller=parametrize)
 
         if debug:
-            print(" - Creating new fixture %r to handle parameter %s" % (p_fix_name, i))
+            print(f" - Creating new fixture {p_fix_name!r} to handle parameter {i}")
 
         # Now we'll create the fixture that will return the unique parameter value
         # since this parameter is unique, we do not parametrize the fixture (_create_param_fixture "auto_simplify" flag)
@@ -381,10 +381,10 @@ class MultiParamAlternative(ParamAlternative):
         self.param_index_to = param_index_to
 
     def __str__(self):
-        return "%s/%s/" % (self.get_union_id(), self.get_alternative_idx())
+        return f"{self.get_union_id()}/{self.get_alternative_idx()}/"
 
     def get_alternative_idx(self):
-        return "P%s:%s" % (self.param_index_from, self.param_index_to)
+        return f"P{self.param_index_from}:{self.param_index_to}"
 
     def get_alternative_id(self):
         # The alternative id is the parameter range - the parameter themselves appear on the referenced fixture
@@ -426,11 +426,11 @@ class MultiParamAlternative(ParamAlternative):
         param_names_str = '_'.join(argnames).replace(' ', '')
 
         # Create a unique fixture name
-        p_fix_name = "%s_%s_is_P%stoP%s" % (test_func.__name__, param_names_str, from_i, to_i - 1)
+        p_fix_name = f"{test_func.__name__}_{param_names_str}_is_P{from_i}toP{to_i - 1}"
         p_fix_name = check_name_available(new_fixture_host, p_fix_name, if_name_exists=CHANGE, caller=parametrize)
 
         if debug:
-            print(" - Creating new fixture %r to handle parameters %s to %s" % (p_fix_name, from_i, to_i - 1))
+            print(f" - Creating new fixture {p_fix_name!r} to handle parameters {from_i} to {to_i - 1}")
 
         # Create the fixture
         # - it will be parametrized to take all the values in argvalues
@@ -501,7 +501,7 @@ class FixtureParamAlternative(SingleParamAlternative):
                                                       argval=fixture_ref, id=id, decorated=decorated)
 
     def get_alternative_idx(self):
-        return "P%sF" % self.alternative_index
+        return f"P{self.alternative_index}F"
 
     def get_alternative_id(self):
         if self.id is not None:
@@ -516,7 +516,7 @@ class ProductParamAlternative(SingleParamAlternative):
     """alternative class for a single product parameter containing fixture refs"""
 
     def get_alternative_idx(self):
-        return "P%sF" % self.alternative_index
+        return f"P{self.alternative_index}F"
 
     def get_alternative_id(self):
         """Similar to SingleParamAlternative: create an id representing this tuple, since the fixture won't be
@@ -560,7 +560,7 @@ class ParamIdMakers(UnionIdMakers):
     #              ):
     #     """Same than parent but display the argnames as prefix instead of the fixture union name generated by
     #     @parametrize, because the latter is too complex (for unicity reasons)"""
-    #     return "%s/%s" % (, param.get_id(prepend_index=True))
+    #     return f"/{param.get_id(prepend_index=True)}"
 
 
 _IDGEN = object()
@@ -589,7 +589,7 @@ def parametrize(argnames: Union[str, tuple[str, ...], list[str]] = None,
     parameters at once (`**args`) and returning an id ; or it can be a string template using the new-style string
     formatting where the argnames can be used as variables (e.g. `idgen=lambda **args: "a={a}".format(**args)` or
     `idgen="my_id where a={a}"`). The special `idgen=AUTO` symbol can be used to generate a default string template
-    equivalent to `lambda **args: "-".join("%s=%s" % (n, v) for n, v in args.items())`. This is enabled by default
+    equivalent to `lambda **args: "-".join(f"{n}={v}" for n, v in args.items())`. This is enabled by default
     if you use the alternate style for argnames/argvalues (e.g. if `len(args) > 0`), and if there are no `fixture_ref`s
     in your argvalues.
 
@@ -670,9 +670,8 @@ class InvalidIdTemplateException(Exception):
         return repr(self)
 
     def __repr__(self):
-        return "Error generating test id using name template '%s' with parameter values " \
-               "%r. Please check the name template. Caught: %s - %s" \
-               % (self.idgen, self.params, self.caught.__class__, self.caught)
+        return f"Error generating test id using name template '{self.idgen}' with parameter values " \
+               f"{self.params!r}. Please check the name template. Caught: {self.caught.__class__} - {self.caught}"
 
 
 def _parametrize_plus(argnames: Union[str, tuple[str, ...], list[str]] = None,
@@ -714,7 +713,7 @@ def _parametrize_plus(argnames: Union[str, tuple[str, ...], list[str]] = None,
         # note: we use a "trick" here with mini_idval to get the appropriate result (argname='', idx=v)
         def _make_ids(**args):
             for n, v in args.items():
-                yield "%s=%s" % (n, mini_idval(val=v, argname='', idx=v))
+                yield f"{n}={mini_idval(val=v, argname='', idx=v)}"
 
         idgen = lambda **args: "-".join(_make_ids(**args))  # noqa
 
@@ -728,9 +727,9 @@ def _parametrize_plus(argnames: Union[str, tuple[str, ...], list[str]] = None,
         # No fixture reference: fallback to a standard pytest.mark.parametrize
         if debug:
             print("No fixture reference found. Calling @pytest.mark.parametrize...")
-            print(" - argnames: %s" % initial_argnames)
-            print(" - argvalues: %s" % marked_argvalues)
-            print(" - ids: %s" % ids)
+            print(f" - argnames: {initial_argnames}")
+            print(f" - argvalues: {marked_argvalues}")
+            print(f" - ids: {ids}")
 
         # handle infinite iterables like latest pytest, for convenience
         ids = resolve_ids(ids, marked_argvalues, full_resolve=False)
@@ -748,8 +747,8 @@ def _parametrize_plus(argnames: Union[str, tuple[str, ...], list[str]] = None,
                     s = signature(test_func)
                     for p in argnames:
                         if p not in s.parameters:
-                            raise ValueError("parameter '%s' not found in test function signature '%s%s'"
-                                             "" % (p, test_func.__name__, s))
+                            raise ValueError(f"parameter '{p}' not found in test function "
+                                             f"signature '{test_func.__name__}{s}'")
                 else:
                     # a Class: we cannot really perform any check.
                     pass
@@ -834,7 +833,7 @@ def _parametrize_plus(argnames: Union[str, tuple[str, ...], list[str]] = None,
             f_fix_name = argvalues[i].fixture
 
             if debug:
-                print(" - Creating reference to existing fixture %r" % (f_fix_name,))
+                print(f" - Creating reference to existing fixture {f_fix_name!r}")
 
             # Create the alternative
             f_fix_alt = FixtureParamAlternative(union_name=union_name, fixture_ref=argvalues[i],
@@ -856,11 +855,11 @@ def _parametrize_plus(argnames: Union[str, tuple[str, ...], list[str]] = None,
             param_values = argvalues[i]
 
             # Create a unique fixture name
-            p_fix_name = "%s_%s_P%s" % (test_func.__name__, param_names_str, i)
+            p_fix_name = f"{test_func.__name__}_{param_names_str}_P{i}"
             p_fix_name = check_name_available(fh, p_fix_name, if_name_exists=CHANGE, caller=parametrize)
 
             if debug:
-                print(" - Creating new fixture %r to handle parameter %s that is a cross-product" % (p_fix_name, i))
+                print(f" - Creating new fixture {p_fix_name!r} to handle parameter {i} that is a cross-product")
 
             # Create the fixture
             _make_fixture_product(fh, name=p_fix_name, hook=hook, caller=parametrize,
@@ -896,13 +895,12 @@ def _parametrize_plus(argnames: Union[str, tuple[str, ...], list[str]] = None,
             old_sig = signature(test_func)
             for p in argnames:
                 if p not in old_sig.parameters:
-                    raise ValueError("parameter '%s' not found in test function signature '%s%s'"
-                                     "" % (p, test_func_name, old_sig))
+                    raise ValueError(f"parameter '{p}' not found in test function "
+                                     f"signature '{test_func_name}{old_sig}'")
 
             # The name for the final "union" fixture
             # style_template = "%s_param__%s"
-            main_fixture_style_template = "%s_%s"
-            fixture_union_name = main_fixture_style_template % (test_func_name, param_names_str)
+            fixture_union_name = f"{test_func_name}_{param_names_str}"
             fixture_union_name = check_name_available(fixtures_dest, fixture_union_name, if_name_exists=CHANGE,
                                                       caller=parametrize)
 
@@ -960,8 +958,8 @@ def _parametrize_plus(argnames: Union[str, tuple[str, ...], list[str]] = None,
 
             # Finally create a "main" fixture with a unique name for this test function
             if debug:
-                print("Creating final union fixture %r with alternatives %r"
-                      % (fixture_union_name, UnionFixtureAlternative.to_list_of_fixture_names(fixture_alternatives)))
+                print(f"Creating final union fixture {fixture_union_name!r} with alternatives "
+                      f"{UnionFixtureAlternative.to_list_of_fixture_names(fixture_alternatives)!r}")
 
             # use the custom subclass of idstyle that was created for ParamAlternatives
             if idstyle is None or isinstance(idstyle, str):
@@ -990,7 +988,7 @@ def _parametrize_plus(argnames: Union[str, tuple[str, ...], list[str]] = None,
                                                                 kind=Parameter.POSITIONAL_OR_KEYWORD))
 
             if debug:
-                print("Creating final test function wrapper with signature %s%s" % (test_func_name, new_sig))
+                print(f"Creating final test function wrapper with signature {test_func_name}{new_sig}")
 
             # --Finally create the fixture function, a wrapper of user-provided fixture with the new signature
             def replace_paramfixture_with_values(kwargs):  # noqa
@@ -1002,7 +1000,7 @@ def _parametrize_plus(argnames: Union[str, tuple[str, ...], list[str]] = None,
                         try:
                             kwargs[p] = encompassing_fixture[i]
                         except TypeError:
-                            raise Exception("Unable to unpack parameter value to a tuple: %r" % encompassing_fixture)
+                            raise Exception(f"Unable to unpack parameter value to a tuple: {encompassing_fixture}")
                 else:
                     kwargs[argnames[0]] = encompassing_fixture
                 # return
@@ -1124,7 +1122,7 @@ def _gen_ids(argnames, argvalues, idgen):
     if not callable(idgen):
         # idgen is a new-style string formatting template
         if not isinstance(idgen, str):
-            raise TypeError("idgen should be a callable or a string, found: %r" % idgen)
+            raise TypeError(f"idgen should be a callable or a string, found: {idgen!r}")
 
         _formatter = idgen
 
@@ -1287,8 +1285,8 @@ def _process_argvalues(argnames, marked_argvalues, nb_params, has_custom_ids, au
             else:
                 # Tuple: check nb params for consistency
                 if len(v) != len(argnames):
-                    raise ValueError("Inconsistent number of values in pytest parametrize: %s items found while the "
-                                     "number of parameters is %s: %s." % (len(v), len(argnames), v))
+                    raise ValueError(f"Inconsistent number of values in pytest parametrize: {len(v)} items found "
+                                     f"while the number of parameters is {len(argnames)}: {v}.")
 
                 # let's dig into the tuple to check if there are fixture_refs or lazy_values
                 lv_pos_list = [j for j, _pval in enumerate(v) if is_lazy_value(_pval)]
