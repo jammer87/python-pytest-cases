@@ -418,8 +418,8 @@ def get_class_that_defined_method(meth):
                 # non-resolvable __qualname__
                 raise HostNotConstructedYet(
                     "__qualname__ is not resolvable, this can happen if the host class of this method "
-                    "%r has not yet been created. PEP3155 does not seem to tell us what we should do "
-                    "in this case." % meth
+                    f"{meth!r} has not yet been created. PEP3155 does not seem to tell us what we should do "
+                    "in this case."
                 )
             if host is None:
                 raise ValueError("__qualname__ leads to `None`, this is strange and not PEP3155 compliant, please "
